@@ -1,0 +1,6 @@
+language: python
+services:
+  - docker
+
+script:
+  - docker build -t ome-k8s-helm-sysops-notebooks .
