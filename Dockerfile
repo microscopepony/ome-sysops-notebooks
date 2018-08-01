@@ -8,7 +8,8 @@ RUN pip install bash-kernel==0.7.1 && \
 USER root
 RUN apt-get update && \
     apt-get install -yq --no-install-recommends \
-    curl
+    curl \
+    openssh-client
 
 # Based on kube-helm-docker
 ARG KUBE_VERSION=1.10.4
@@ -28,5 +29,13 @@ RUN mkdir -p $HOME/.helm/plugins && \
     curl -sSL https://github.com/databus23/helm-diff/releases/download/v${HELMDIFF_VERSION}/helm-diff-linux.tgz | \
     tar -C $HOME/.helm/plugins -xz
 
+# This is Python 3, if there are problem may need to switch to a
+# Python 2 environment
+RUN conda install -y -q "ansible>=2.5.5,<2.6" && \
+    mkdir $HOME/.ssh && \
+    chmod 700 $HOME/.ssh
+
 ENV JUPYTER_ENABLE_LAB=1
 COPY --chown=1000:100 notebooks/ /notebooks/
+
+CMD ["ssh-agent", "start-notebook.sh"]
